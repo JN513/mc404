@@ -104,7 +104,7 @@ void int_to_bin(char *s, int n) {
         n = n >> 1;
     }
 
-    s[34] = '\0';
+    s[34] = '\n';
     s[0] = '0';
     s[1] = 'b';
 }
@@ -132,7 +132,7 @@ void int_to_hex(char *s, int n) {
         s[k + 1] = c;
     }
 
-    s[k + 2] = '\0';
+    s[k + 2] = '\n';
     s[0] = '0';
     s[1] = 'x';
 }
@@ -161,7 +161,7 @@ void int_to_oct(char *s, int n) { // E - C
         k++;
     }
 
-    s[k + 1] = '\0';
+    s[k + 1] = '\n';
     s[0] = '0';
     s[1] = 'o';
 }
@@ -197,7 +197,7 @@ void int_to_str(char *s, int n) {
         s[i - j - 1] = c;
     }
 
-    s[i] = '\0';
+    s[i] = '\n';
 }
 
 void uint_to_str(char *s, unsigned int n) {
@@ -219,7 +219,7 @@ void uint_to_str(char *s, unsigned int n) {
         s[i - j - 1] = c;
     }
 
-    s[i] = '\0';
+    s[i] = '\n';
 }
 
 int inverted_endness(int n) {
