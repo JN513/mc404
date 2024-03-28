@@ -44,6 +44,18 @@ int len(char *s) {
     return (int)(s - original);
 }
 
+int stroct_to_int(char *s, int len) {
+    int val = 0;
+    for (int i = 2; i < len; i++) {
+        int byte = (int)s[i];
+
+        byte = byte - '0';
+
+        val = (val << 3) | (byte & 0x7);
+    }
+    return val;
+}
+
 int strhex_to_int(char *s, int len) {
     int val = 0;
     for (int i = 2; i < len; i++) {
@@ -56,30 +68,6 @@ int strhex_to_int(char *s, int len) {
             byte = byte - 'A' + 10;
 
         val = (val << 4) | (byte & 0xF);
-    }
-    return val;
-}
-
-int strdec_to_int(char *s, int len, int neg) {
-    int r = 0;
-    int mod = 1;
-
-    for (int i = len - 1; i >= 0 + neg; i--) {
-        r += (s[i] - '0') * (mod);
-        mod *= 10;
-    }
-
-    return r;
-}
-
-int stroct_to_int(char *s, int len) {
-    int val = 0;
-    for (int i = 2; i < len; i++) {
-        int byte = (int)s[i];
-
-        byte = byte - '0';
-
-        val = (val << 3) | (byte & 0x7);
     }
     return val;
 }
@@ -98,43 +86,16 @@ int strbin_to_int(char *s, int len) {
     return val;
 }
 
-void reverse_string(char *str, int length) {
-    int start = 0;
-    int end = length - 1;
-    while (start < end) {
-        char temp = *(str + start);
-        *(str + start) = *(str + end);
-        *(str + end) = temp;
-        start++;
-        end--;
-    }
-}
+int strdec_to_int(char *s, int len, int neg) {
+    int r = 0;
+    int mod = 1;
 
-void int_to_str(char *s, int n) {
-    int i = 0;
-    int is_negative = 0;
-
-    if (n < 0) {
-        is_negative = 1;
-        n = -n;
-    }
-    if (n == 0) {
-        *(s + i++) = '0';
+    for (int i = len - 1; i >= 0 + neg; i--) {
+        r += (s[i] - '0') * (mod);
+        mod *= 10;
     }
 
-    while (n != 0) {
-        int digit = n % 10;
-        *(s + i++) = digit + '0';
-        n = n / 10;
-    }
-
-    if (is_negative) {
-        *(s + i++) = '-';
-    }
-
-    *(s + i) = '\n';
-
-    reverse_string(s, i);
+    return r;
 }
 
 void int_to_bin(char *s, int n) {
@@ -143,7 +104,7 @@ void int_to_bin(char *s, int n) {
         n = n >> 1;
     }
 
-    s[34] = '\n';
+    s[34] = '\0';
     s[0] = '0';
     s[1] = 'b';
 }
@@ -171,17 +132,17 @@ void int_to_hex(char *s, int n) {
         s[k + 1] = c;
     }
 
-    s[k + 2] = '\n';
+    s[k + 2] = '\0';
     s[0] = '0';
     s[1] = 'x';
 }
 
 void int_to_oct(char *s, int n) { // E - C
-    int i = 0;
+    unsigned int i = 0;
     char c;
     int k = 0;
 
-    for (int j = 0; j < 11; j++) {
+    for (int j = 0; j <= 11; j++) {
         if (j != 0) {
             i = (n & 0xE0000000);
             i = i >> 29;
@@ -200,9 +161,84 @@ void int_to_oct(char *s, int n) { // E - C
         k++;
     }
 
-    s[k + 1] = '\n';
+    s[k + 1] = '\0';
     s[0] = '0';
     s[1] = 'o';
+}
+
+void int_to_str(char *s, int n) {
+    int i = 0;
+    int is_negative = 0;
+
+    if (n < 0) {
+        is_negative = 1;
+
+        n = n * -1;
+    }
+
+    while (n) {
+        char c = (n % 10) + '0';
+
+        n = n / 10;
+
+        s[i] = c;
+
+        i++;
+    }
+
+    if (is_negative) {
+        s[i] = '-';
+        i++;
+    }
+
+    for (int j = 0; j < i / 2; j++) {
+        char c = s[j];
+        s[j] = s[i - j - 1];
+        s[i - j - 1] = c;
+    }
+
+    s[i] = '\0';
+}
+
+void uint_to_str(char *s, unsigned int n) {
+    int i = 0;
+
+    while (n) {
+        char c = (n % 10) + '0';
+
+        n = n / 10;
+
+        s[i] = c;
+
+        i++;
+    }
+
+    for (int j = 0; j < i / 2; j++) {
+        char c = s[j];
+        s[j] = s[i - j - 1];
+        s[i - j - 1] = c;
+    }
+
+    s[i] = '\0';
+}
+
+int inverted_endness(int n) {
+    int b1 = n & 0x000000FF;
+    int b2 = n & 0x0000FF00;
+    int b3 = n & 0x00FF0000;
+    int b4 = n & 0xFF000000;
+
+    b1 = b1 << 24;
+    b2 = b2 << 8;
+    b3 = b3 >> 8;
+    b4 = b4 >> 24;
+
+    b1 = b1 & 0xFF000000;
+    b2 = b2 & 0x00FF0000;
+    b3 = b3 & 0x0000FF00;
+    b4 = b4 & 0x000000FF;
+
+    return (unsigned int)b1 | b2 | b3 | b4;
 }
 
 int get_type(char *s) {
@@ -256,14 +292,19 @@ int main() {
     char hex[12];
     char octal[15];
     char decimal[17];
+    char invertendless[20];
+
+    unsigned int a = inverted_endness(val);
 
     int_to_bin(binary, val);
     int_to_hex(hex, val);
-    int_to_oct(decimal, val);
+    int_to_oct(octal, val);
+    int_to_str(decimal, val);
+    uint_to_str(invertendless, a);
 
     write(STDOUT_FD, binary, 35);
     write(STDOUT_FD, decimal, 17);
-    write(STDOUT_FD, binary, 35);
+    write(STDOUT_FD, invertendless, 35);
     write(STDOUT_FD, hex, 12);
     write(STDOUT_FD, octal, 15);
     return 0;

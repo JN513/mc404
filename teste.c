@@ -32,8 +32,6 @@ int strhex_to_int(char *s, int len) {
 int strbin_to_int(char *s, int len) {
     int val = 0;
 
-    printf("len: %d \n", len);
-
     for (int i = 2; i < len; i++) {
         int byte = (int)s[i];
 
@@ -135,14 +133,37 @@ void int_to_str(char *s, int n) {
         is_negative = 1;
 
         n = n * -1;
-
-        printf("n1: %d\n", n);
     }
 
     while (n) {
         char c = (n % 10) + '0';
 
-        printf("c: %d\n", c);
+        n = n / 10;
+
+        s[i] = c;
+
+        i++;
+    }
+
+    if (is_negative) {
+        s[i] = '-';
+        i++;
+    }
+
+    for (int j = 0; j < i / 2; j++) {
+        char c = s[j];
+        s[j] = s[i - j - 1];
+        s[i - j - 1] = c;
+    }
+
+    s[i] = '\0';
+}
+
+void uint_to_str(char *s, unsigned int n) {
+    int i = 0;
+
+    while (n) {
+        char c = (n % 10) + '0';
 
         n = n / 10;
 
@@ -160,30 +181,59 @@ void int_to_str(char *s, int n) {
     s[i] = '\0';
 }
 
+int inverted_endness(int n) {
+    int b1 = n & 0x000000FF;
+    int b2 = n & 0x0000FF00;
+    int b3 = n & 0x00FF0000;
+    int b4 = n & 0xFF000000;
+
+    b1 = b1 << 24;
+    b2 = b2 << 8;
+    b3 = b3 >> 8;
+    b4 = b4 >> 24;
+
+    b1 = b1 & 0xFF000000;
+    b2 = b2 & 0x00FF0000;
+    b3 = b3 & 0x0000FF00;
+    b4 = b4 & 0x000000FF;
+
+    return (unsigned int)b1 | b2 | b3 | b4;
+}
+
+// 10010000101011001111011111111111
+
 int main(void) {
-    char s[] = "0b10000000000000000000000000000000";
+    char s[] = "0b11111111111101111010110010010000";
 
     int k = strlen(s);
 
-    int w = strbin_to_int(s, k);
+    int w = -545648;
+
+    w = strbin_to_int(s, k);
 
     printf("w: %d\n", w);
-    printf("w: %d\n", 2 * w);
+    printf("w: %d\n", w);
 
     char y[35];
     char z[11];
     char p[15];
     char pa[18];
+    char d[20];
 
     int_to_bin(y, w);
     int_to_hex(z, w);
     int_to_oct(p, w);
     int_to_str(pa, w);
+    unsigned int a = inverted_endness(w);
+    uint_to_str(d, a);
+    // int_to_bin(y, a);
 
     printf("s: %s\n", y);
     printf("s: %s\n", z);
     printf("s: %s\n", p);
     printf("s: %s\n", pa);
+    printf("s: %s\n", d);
+    printf("s: %u\n", a);
 
     return 0;
 }
