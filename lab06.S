@@ -1,58 +1,122 @@
 .global _start
 
 _start:
-    li a3, 0;
     jal main
     li a0, 0
     li a7, 93 # exit
     ecall
 
-# left esquerda
+
 main:
-    mv ra, s0;
-    call read
+    li sp, -4;
+    sw ra, 0(sp);
+    call read;
 
-    la a0, input_adress
-    mv a1, a0;
-    addi a1, a1, 80;
-    li a3, 0;
-    li t4, 0;
-    li t5, 5;
-
-    li t2, 100000000000000;
-    li t3, 10;
-
-    mv t1, a3;
-    mv t2, a3;
-    mv t3, a3;
-    mv t4, a3;
-
-    slli t1, t1, 24;
-    slli t2, t2, 16;
-    slli t3, t3, 8;
-
-    andi t1, t1, 0x000000FF; 
-    andi t2, t2, 0x000000FF; 
-    andi t3, t3, 0x000000FF; 
-    andi t4, t4, 0x000000FF; 
-
-    addi t5, zero, 10
-
-    la t6, result;
-
-    sb t1, 0(t6); 
-    sb t2, 4(t6); 
-    sb t3, 8(t6); 
-    sb t4, 12(t6); 
-    sb t5, 16(t6);
+    li a0, 0;
+    li t1, 4;
+    li t2, 20;
+    la s1, input_address;
+    la s4, result;
 
     call write;
+    
+    lw ra, 0(sp);
+    addi sp, sp, 4;
+    ret;
 
-    jalr zero, s0, 0;
+
+
+loop:
+    lbu t3, 0(s1) # read numbers
+    lbu t4, 4(s1)
+    lbu t5, 8(s1)
+    lbu t6, 12(s1)
+
+    addi t3, t3, -48; # converte ascii t int
+    addi t4, t4, -48;
+    addi t5, t4, -48;
+    addi t6, t6, -48;
+
+    li a1, 10;
+    mul t4, t4, a1;
+
+    li a1, 100;
+    mul t5, t5, a1;
+
+    li a1, 1000;
+    mul t6, t6, a1;
+
+    add a0, t3, t4; # soma em a0
+    add a0, t5, a0;
+    add a0, t6, a0;
+
+    li sp, -4;
+    sw ra, 0(sp);
+
+    call sqrt
+    call num_to_ascii
+
+    lw ra, 0(sp);
+    addi sp, sp, 4;
+
+    add s1, s1, t2;
+    add s4, s4, t2;
+    addi t1, t1, -1;
+
+    beq t1, zero, fim;
+
+    j loop
+
+fim:
+    ret;
+
+sqrt:
+    srai a1, a0, 1;
+    li a2, 10;
+sqrt_loop:
+    div a3, a0, a1;
+    add a1, a1, a3;
+    srai a1, a1, 1;
+    addi a2, a2, -1;
+
+    bnez a2, sqrt_loop;
+
+    ret;
+
+num_to_ascii:
+    # Primeiro dígito
+    li t4, 1000
+    div t3, a1, t4
+    addi t3, t3, 48
+    sw t3, 0(s4) # Armazena o primeiro dígito em a0
+
+    # Segundo dígito
+    mul t3, t3, t4
+    sub a1, a1, t3
+    li t4, 100
+    div t3, a1, t4
+    addi t3, t3, 48
+    sw t3, 4(s4) # Armazena o segundo dígito em a0+4
+
+    # Terceiro dígito
+    mul t3, t3, t4
+    sub a1, a1, t3
+    li t4, 10
+    div t3, a1, t4
+    addi t3, t3, 48
+    sw t3, 8(s4) # Armazena o terceiro dígito em a0+8
+
+    # Quarto dígito
+    mul t3, t3, t4
+    sub a1, a1, t3
+    addi a1, a1, 48
+    sw a1, 12(s4) # Armazena o quarto dígito em a0+12
+
+    ret
 
 read:
     li a0, 0            # file descriptor = 0 (stdin)
-    la a1, input_adress # buffer
+    la a1, input_address # buffer
     li a2, 20           # size - Reads 20 bytes.
     li a7, 63           # syscall read (63)
     ecall
@@ -66,31 +130,6 @@ write:
     ecall
     ret
 
-pulo:
-    li t4, 0;
-    jal zero, get_number
-
-get_number:
-    lbu t1, 0(a0);
-    addi t3, t3, 1;
-    addi t4, t4, 1;
-
-    beq t4, t5, pulo;
-    
-    addi a0, a0, 4;
-    beq a1, a0, fim;
-
-    addi t1, t1, -48;
-
-    mul t1, t1, t2;
-    div t2, t2, t3;
-
-    add a3, a3, t1;
-
-    jal zero, get_number
-
-fim:
-    ret;
 
 .bss
 
