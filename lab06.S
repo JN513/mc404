@@ -22,7 +22,7 @@ main:
     call loop;
 
     li t0, 10;
-    #sb t0, 0(s4)
+    sw t0, 0(s4)
 
     #call write;
 
@@ -37,7 +37,7 @@ loop:
     lbu t5, 8(s1)
     lbu t6, 12(s1)
 
-    addi t3, t3, -48; # converte ascii t int
+    addi t3, t3, -48; # converte ascii to int
     addi t4, t4, -48;
     addi t5, t4, -48;
     addi t6, t6, -48;
