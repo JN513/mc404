@@ -19,7 +19,7 @@ main:
     la s1, input_address;
     la s4, result;
 
-    call loop;
+    #call loop;
 
     li t0, 10;
     sw t0, 0(s4)
@@ -138,6 +138,6 @@ write:
 
 .bss
 
-input_address: .skip 0x20  # buffer
+input_address: .skip 0x40  # buffer
 
-result: .skip 0x20
+result: .skip 0x40
