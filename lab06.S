@@ -10,7 +10,7 @@ _start:
 main:
     call read;
 
-    li sp, -4;
+    addi sp, sp, -4;
     sw ra, 0(sp);
 
     li a0, 0;
