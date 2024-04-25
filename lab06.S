@@ -8,9 +8,10 @@ _start:
 
 
 main:
+    call read;
+
     li sp, -4;
     sw ra, 0(sp);
-    call read;
 
     li a0, 0;
     li t1, 4;
