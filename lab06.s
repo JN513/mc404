@@ -15,16 +15,16 @@ main:
 
     li a0, 0;
     li t1, 4;
-    li t2, 20;
+    li t2, 5;
     la s1, input_address;
     la s4, result;
 
-    #call loop;
+    call loop;
 
     li t0, 10;
-    sw t0, 0(s4)
+    sw t0, -1(s4)
 
-    #call write;
+    call write;
 
     lw ra, 0(sp);
     addi sp, sp, 4;
@@ -33,23 +33,23 @@ main:
 
 loop:
     lbu t3, 0(s1) # read numbers
-    lbu t4, 4(s1)
-    lbu t5, 8(s1)
-    lbu t6, 12(s1)
+    lbu t4, 1(s1)
+    lbu t5, 2(s1)
+    lbu t6, 3(s1)
 
     addi t3, t3, -48; # converte ascii to int
     addi t4, t4, -48;
-    addi t5, t4, -48;
+    addi t5, t5, -48;
     addi t6, t6, -48;
 
     li a1, 10;
-    mul t4, t4, a1;
-
-    li a1, 100;
     mul t5, t5, a1;
 
+    li a1, 100;
+    mul t4, t4, a1;
+
     li a1, 1000;
-    mul t6, t6, a1;
+    mul t3, t3, a1;
 
     add a0, t3, t4; # soma em a0
     add a0, t5, a0;
@@ -92,30 +92,33 @@ num_to_ascii:
     # Primeiro dígito
     li t4, 1000
     div t3, a1, t4
-    addi t3, t3, 48
-    sw t3, 0(s4) # Armazena o primeiro dígito em a0
+    addi t5, t3, 48
+    sw t5, 0(s4) # Armazena o primeiro dígito em a0
 
     # Segundo dígito
     mul t3, t3, t4
     sub a1, a1, t3
     li t4, 100
     div t3, a1, t4
-    addi t3, t3, 48
-    sw t3, 4(s4) # Armazena o segundo dígito em a0+4
+    addi t5, t3, 48
+    sw t5, 1(s4) # Armazena o segundo dígito em a0+4
 
     # Terceiro dígito
     mul t3, t3, t4
     sub a1, a1, t3
     li t4, 10
     div t3, a1, t4
-    addi t3, t3, 48
-    sw t3, 8(s4) # Armazena o terceiro dígito em a0+8
+    addi t5, t3, 48
+    sw t5, 2(s4) # Armazena o terceiro dígito em a0+8
 
     # Quarto dígito
     mul t3, t3, t4
     sub a1, a1, t3
     addi a1, a1, 48
-    sw a1, 12(s4) # Armazena o quarto dígito em a0+12
+    sw a1, 3(s4) # Armazena o quarto dígito em a0+12
+
+    li a1, 32;
+    sw a1, 4(s4) # espaço
 
     ret
 
