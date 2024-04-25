@@ -292,19 +292,30 @@ int main() {
     char hex[12];
     char octal[15];
     char decimal[17];
-    char invertendless[20];
+    char invertendless[17];
 
     unsigned int a = inverted_endness(val);
 
     int_to_bin(binary, val);
     int_to_hex(hex, val);
     int_to_oct(octal, val);
-    int_to_str(decimal, val);
+    // int_to_str(decimal, val);
     uint_to_str(invertendless, a);
+
+    int overflow = 0;
+    if (val == -2147483648) {
+        val++;
+        overflow = 1;
+    }
+    int_to_str(decimal, val);
+
+    if (overflow == 1) {
+        decimal[10] = '8';
+    }
 
     write(STDOUT_FD, binary, 35);
     write(STDOUT_FD, decimal, 17);
-    write(STDOUT_FD, invertendless, 35);
+    write(STDOUT_FD, invertendless, 15);
     write(STDOUT_FD, hex, 12);
     write(STDOUT_FD, octal, 15);
     return 0;

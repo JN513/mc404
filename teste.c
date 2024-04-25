@@ -203,11 +203,11 @@ int inverted_endness(int n) {
 // 10010000101011001111011111111111
 
 int main(void) {
-    char s[] = "0b11111111111101111010110010010000";
+    char s[] = "0b10000000000000000000000000000000";
 
     int k = strlen(s);
 
-    int w = -545648;
+    int w = -2147483648;
 
     w = strbin_to_int(s, k);
 
@@ -223,10 +223,21 @@ int main(void) {
     int_to_bin(y, w);
     int_to_hex(z, w);
     int_to_oct(p, w);
-    int_to_str(pa, w);
+
     unsigned int a = inverted_endness(w);
     uint_to_str(d, a);
     // int_to_bin(y, a);
+
+    int overflow = 0;
+    if (w == -2147483648) {
+        w++;
+        overflow = 1;
+    }
+    int_to_str(pa, w);
+
+    if (overflow == 1) {
+        pa[10] = '8';
+    }
 
     printf("s: %s\n", y);
     printf("s: %s\n", z);
