@@ -56,7 +56,7 @@ loop:
     add a0, t5, a0;
     add a0, t6, a0;
 
-    li sp, -4;
+    addi sp, sp, -4;
     sw ra, 0(sp);
 
     call sqrt
