@@ -19,6 +19,11 @@ main:
     la s1, input_address;
     la s4, result;
 
+    call loop;
+
+    li t0, 10;
+    sb t0, 16(s4)
+
     call write;
     
     lw ra, 0(sp);
