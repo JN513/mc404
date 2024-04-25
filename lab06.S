@@ -8,10 +8,10 @@ _start:
 
 
 main:
-    call read;
-
     addi sp, sp, -4;
     sw ra, 0(sp);
+
+    call read;
 
     li a0, 0;
     li t1, 4;
@@ -22,15 +22,14 @@ main:
     call loop;
 
     li t0, 10;
-    sb t0, 16(s4)
+    #sb t0, 0(s4)
 
-    call write;
-    
+    #call write;
+
     lw ra, 0(sp);
     addi sp, sp, 4;
+
     ret;
-
-
 
 loop:
     lbu t3, 0(s1) # read numbers
