@@ -16,6 +16,10 @@ lab05:
 lab06:
 	riscv32-unknown-elf-as -march=rv32im -g lab06.s -o lab06.o
 	riscv32-unknown-elf-ld lab06.o -o lab06.x
+
+lab07:
+	riscv32-unknown-elf-as -march=rv32im -g lab07.s -o lab07.o
+	riscv32-unknown-elf-ld lab07.o -o lab07.x
 # clang --target=riscv32 -march=rv32g -mabi=ilp32d -mno-relax lab04.c -c -o lab04.o
 
 riscv:
