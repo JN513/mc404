@@ -1,5 +1,3 @@
-all: lab02
-
 lab02:
 	riscv32-unknown-elf-gcc -march=rv32id -mabi=ilp32 -Wall lab02.c -nostartfiles -nostdinc -nostdlib
 
@@ -20,6 +18,10 @@ lab06:
 lab07:
 	riscv32-unknown-elf-as -march=rv32im -g lab07.s -o lab07.o
 	riscv32-unknown-elf-ld lab07.o -o lab07.x
+
+lab08:
+	riscv32-unknown-elf-as -march=rv32im -g lab08.s -o lab08.o
+	riscv32-unknown-elf-ld lab08.o -o lab08.x
 # clang --target=riscv32 -march=rv32g -mabi=ilp32d -mno-relax lab04.c -c -o lab04.o
 
 riscv:
