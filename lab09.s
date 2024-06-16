@@ -18,7 +18,7 @@ main:
 
     la a1, input_address;
 
-    lw t0, 0(a1);
+    lbu t0, 0(a1);
     # lw in t1 '-' ascii code
     li s0, 0
     li t1, 45;
@@ -26,7 +26,7 @@ main:
     li t3, 1;
     li t4, 10;
     li t6, 0;
-    bne t0, t1, positive;    
+    bne t0, t1, positive;
 
 negative:
     addi t5, t5, -1;
@@ -61,8 +61,102 @@ fim_read_loop:
     mul s0, s0, t2; // precisa concertar leitura negativa
 
 read_head_node: // precisa achar endereço de head_node
-    li t0, 0;
+    la t0, head_node;
     lw t1, 0(t0);
+
+    li s1, -1;
+    li t6, 0;
+    li t5, 0;
+
+    add t5, t5, t1;
+    lw t1, 4(t0);
+    add t5, t5, t1;
+    lw t1, 8(t0);
+    add t5, t5, t1;
+
+    lw t0, 12(t0);
+
+    beq t5, s0, encontrou;
+    beq t0, zero, print_output;
+
+check_loop:
+    addi t6, t6, 1;
+    lw t1, 0(t0);
+    add t5, zero, t1;
+    lw t1, 4(t0);
+    add t5, t5, t1;
+    lw t1, 8(t0);
+    add t5, t5, t1;    
+    lw t0, 12(t0);
+
+    beq t5, s0, encontrou;
+
+    beq t0, zero, print_output;
+    j check_loop;
+
+encontrou:
+    mv s1, t6;
+print_output:
+    la a0, result;
+    li t2, 0;
+    # convert s1 to string
+    bltz s1, negative_output;
+    j positive_output;
+negative_output:
+    li t0, -1;
+    mul s1, s1, t0;
+    li t0, 45;
+    sb t0, 0(a0);
+    addi a0, a0, 1;
+    li t2, 1;
+
+positive_output:
+    li t0, 0;
+    li t1, 10;
+
+converte_to_ascii_loop:
+    addi t0, t0, 1;
+    rem t3, s1, t1;
+    addi t3, t3, 48;
+    sb t3, 0(a0);
+    addi a0, a0, 1;
+    div s1, s1, t1;
+
+    beq s1, zero, invert_ascii;
+
+    j converte_to_ascii_loop;
+
+invert_ascii:
+    li t3, 10;
+    sb t3, 0(a0);
+
+    li t3, 2;
+    mv t6, t0;
+    div t0, t0, t3;
+    la a0, result;
+    add a0, a0, t2;
+    add t6, t6, a0; // endereço do último caractere
+    addi t6, t6, -1;
+
+    li t3, 0;
+
+invert_ascii_loop:
+    lbu t4, 0(a0);
+    lbu t5, 0(t6);
+
+    sb t5, 0(a0);
+    sb t4, 0(t6);
+
+    addi a0, a0, 1;
+    addi t6, t6, -1;
+    addi t3, t3, 1;
+
+    bge t3, t0, fim_converte_to_ascii_loop;
+    j invert_ascii_loop;
+
+fim_converte_to_ascii_loop:
+
+    call write;
 
     lw ra, 0(sp);
     addi sp, sp, 4;
