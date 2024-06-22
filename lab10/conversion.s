@@ -1,5 +1,19 @@
-.globl atoi
-.globl itoa
+.global _start
+
+_start:
+    la a0, buffer
+
+itoa_a:
+    li a0, -32
+    la a1, out
+    li a2, 10
+
+    call itoa
+
+fim:
+    li a0, 0
+    li a7, 93 # exit
+    ecall
 
 atoi: # recebe a string a ser convertida e retorna um inteiro - int atoi (const char *str); 
     addi t0, zero, 0    # t0 = 0  (resultado)
@@ -56,9 +70,7 @@ itoa: # recebe um inteiro, o buffer a ser escrito e a base para conversão - cha
     sw a1, 0(sp)      # Salvar ponteiro para string
 
     # Inicializar variáveis
-    addi t0, zero, 0   # t0 = 0 (índice para a string)
     addi t1, zero, 0   # t1 = 0 (sinal: 0 = positivo, 1 = negativo)
-    addi t2, zero, 0   # t2 = valor absoluto
     addi t6, zero, 10  # t6 = 10 (verificador se numero ou letra)
 
     # Verificar o sinal
@@ -67,10 +79,10 @@ itoa: # recebe um inteiro, o buffer a ser escrito e a base para conversão - cha
 
 itoa_negative:
     addi t1, zero, 1   # t1 = 1 (negativo)
-    neg t3, t3         # t3 = -t3
+    neg a0, a0         # t3 = -t3
 
 itoa_abs_done:
-    mv t2, t3          # t2 = valor absoluto
+    mv t2, a0          # t2 = valor absoluto
 
 itoa_convert_loop:
     beqz t2, itoa_convert_done  # Se valor for zero, terminar
@@ -93,7 +105,7 @@ itoa_convert_store:
     j itoa_convert_loop
 
 itoa_convert_done:
-    beq t1, zero, itoa_return  # Se positivo, retornar
+    beq t1, zero, itoa_finish  # Se positivo, retornar
     li t3, 45          # t3 = '-'
     sb t3, 0(a1)       # Adicionar sinal negativo
     addi a1, a1, 1    # Avançar para o próximo caractere
@@ -121,3 +133,7 @@ itoa_return:
     addi sp, sp, 44  # Liberar espaço na pilha
 
     ret
+
+.section .data
+buffer: .asciz "50"
+out: .skip 20
